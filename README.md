@@ -1,2 +1,2 @@
 # crypto-akshayaselvakumar
-http://crypto.akshayselvakumar.com/
+http://crypto.akshayaselvakumar.com/
