@@ -8,10 +8,10 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-SVS7L9XYS7');
-     </script>
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto AkshayaSelvakumar - Web3 Tools</title> 
+    <title>Crypto AkshayaSelvakumar - Web3 Tools</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Chart.js -->
@@ -46,6 +46,14 @@
             right: 10px;
             background: linear-gradient(45deg, #ff6b6b, #ff9f43);
         }
+        .partner-logo {
+            transition: opacity 0.3s;
+            max-width: 160px;
+            height: auto;
+        }
+        .partner-logo:hover {
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
@@ -69,7 +77,8 @@
             </div>
         </div>
     </nav>
-     <!-- Hero Section -->
+
+    <!-- Hero Section -->
     <section class="hero-section text-white text-center">
         <div class="container">
             <h1 class="display-4 mb-4">Your Ultimate Web3 Toolkit</h1>
@@ -81,14 +90,8 @@
     <section id="donate" class="py-5 bg-light">
         <div class="container text-center">
             <h2 class="mb-4">Support Our Development</h2>
-            <!-- NowPayments Donation Button -->
             <button class="btn btn-primary btn-lg" 
-                    data-nowpayments
-                    data-description="Support Crypto Akshaya"
-                    data-currency="eth"
-                    data-type="donation"
-                    data-amount=""
-                    data-label="Donate ETH">
+                    onclick="window.open('https://nowpayments.io/donation/CryptoAkshaya', '_blank')">
                 💰 Donate ETH
             </button>
         </div>
@@ -123,7 +126,7 @@
                     </div>
                 </div>
 
-                <!-- Tax Calculator with Premium Feature -->
+                <!-- Tax Calculator -->
                 <div class="col-md-4">
                     <div class="card tool-card">
                         <div class="card-body">
@@ -136,7 +139,6 @@
                             <div id="taxResult" class="d-none">
                                 <p>Taxable Gains: <span id="taxAmount">0</span> ETH</p>
                                 <p>Tax Owed (20%): <span id="taxOwed">0</span> ETH</p>
-                                <!-- Premium Download Button -->
                                 <button class="btn btn-success" 
                                         onclick="showPremiumOffer()">
                                     Download Pro Report (0.1 ETH)
@@ -145,7 +147,8 @@
                         </div>
                     </div>
                 </div>
-             <!-- Airdrop Tracker -->
+
+                <!-- Airdrop Tracker -->
                 <div class="col-md-4">
                     <div class="card tool-card">
                         <div class="card-body">
@@ -153,11 +156,12 @@
                             <p class="card-text">Latest crypto airdrop opportunities</p>
                         </div>
                     </div>
-                </div>        
+                </div>
             </div>
         </div>
     </section>
-     <!-- Partners Section -->
+
+    <!-- Partners Section -->
     <section id="partners" class="py-5 bg-light">
         <div class="container">
             <h2 class="text-center mb-5">Exchange Partners</h2>
@@ -181,6 +185,7 @@
             </div>
         </div>
     </section>
+
     <!-- Pro Updates Form -->
     <section class="bg-dark text-white py-4">
         <div class="container">
@@ -194,40 +199,51 @@
                 </div>
             </form>
         </div>
-      
-      <div class="col-md-6 text-end">
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8">
+                    <p class="small text-muted mb-3">
+                        🛈 Contains affiliate links. Partners pay commissions at no extra cost. 
+                        Cryptocurrency trading may have tax implications in your jurisdiction.
+                    </p>
+                </div>
+                <div class="col-md-4 text-end">
                     <p>&copy; 2025 Crypto AkshayaSelvakumar</p>
                     <p>Hosted on GitHub Pages</p>
                 </div>
-    </section>
+            </div>
+        </div>
+    </footer>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- NowPayments Widget -->
-     <script>
+    <script>
         // NowPayments Configuration
-        const NOWPAYMENTS_API_KEY = "3BTM26S-ZP5M90Y-GGZR4EK-MSFX3YW";
-        const NOWPAYMENTS_DONATION_LINK = "https://nowpayments.io/donation/CryptoAkshaya";
         const NOWPAYMENTS_PRO_PRODUCT_LINK = "https://nowpayments.io/payment/?iid=4396532580";
-
-        // Initialize NowPayments Donation Button
-        document.querySelector('[data-nowpayments]').addEventListener('click', () => {
-            window.open(NOWPAYMENTS_DONATION_LINK, '_blank');
-        });
 
         // Premium Feature Handling
         function showPremiumOffer() {
-            const confirmed = confirm("Upgrade to Pro for detailed PDF reports (0.1 ETH)");
+            const confirmed = confirm("Upgrade to Pro for detailed PDF reports (0.2 ETH)");
             if(confirmed) {
                 window.location.href = NOWPAYMENTS_PRO_PRODUCT_LINK;
+                gtag('event', 'pro_offer_click', {
+                    'event_category': 'monetization'
+                });
             }
         }
 
-        // Handle payment success redirect
+        // Payment Success Handling
         const urlParams = new URLSearchParams(window.location.search);
         if(urlParams.has('payment_success')) {
             window.history.replaceState({}, document.title, "/");
             showThankYouPage();
+            gtag('event', 'payment_success', {
+                'event_category': 'transactions'
+            });
         }
 
         function showThankYouPage() {
@@ -245,113 +261,115 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-        const ETHERSCAN_API_KEY = "UR4VBGYHPUBPQSEMUEZ4GJI37U7SDXUNJ8";
-        const COVALENT_API_KEY = "cqt_rQPcbvmcm98yvKYCjPXwt3PGBXyf";
-        
-        // Gas Fee Optimizer
-        const gasChart = new Chart(document.getElementById('gasChart'), {
-            type: 'line',
-            data: {
-                labels: Array.from({length: 24}, (_, i) => `${i}h`),
-                datasets: [{
-                    label: 'Gas Price (gwei)',
-                    data: [],
-                    borderColor: '#0d6efd',
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } }
-            }
-        });
-
-        async function fetchGasPrices() {
-            try {
-                const response = await fetch(
-                    `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${ETHERSCAN_API_KEY}`
-                );
-                const data = await response.json();
-                
-                if(data.status === "1") {
-                    document.getElementById("gasLow").textContent = data.result.SafeGasPrice;
-                    document.getElementById("gasAvg").textContent = data.result.ProposeGasPrice;
-                    document.getElementById("gasHigh").textContent = data.result.FastGasPrice;
-                    
-                    // Update chart data
-                    gasChart.data.datasets[0].data = Array.from({length: 24}, () => 
-                        Math.floor(Math.random() * 50 + 20)
-                    );
-                    gasChart.update();
+            const ETHERSCAN_API_KEY = "UR4VBGYHPUBPQSEMUEZ4GJI37U7SDXUNJ8";
+            const COVALENT_API_KEY = "cqt_rQPcbvmcm98yvKYCjPXwt3PGBXyf";
+            
+            // Gas Fee Optimizer
+            const gasChart = new Chart(document.getElementById('gasChart'), {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 24}, (_, i) => `${i}h`),
+                    datasets: [{
+                        label: 'Gas Price (gwei)',
+                        data: [],
+                        borderColor: '#0d6efd',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
                 }
+            });
 
-                    // Update UI
+            async function fetchGasPrices() {
+                try {
+                    const response = await fetch(
+                        `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${ETHERSCAN_API_KEY}`
+                    );
+                    const data = await response.json();
+                    
+                    if(data.status === "1") {
+                        document.getElementById("gasLow").textContent = data.result.SafeGasPrice;
+                        document.getElementById("gasAvg").textContent = data.result.ProposeGasPrice;
+                        document.getElementById("gasHigh").textContent = data.result.FastGasPrice;
+                        
+                        gasChart.data.datasets[0].data = Array.from({length: 24}, () => 
+                            Math.floor(Math.random() * 50 + 20)
+                        );
+                        gasChart.update();
+
+                        // Track gas tool usage
                         gtag('event', 'gas_tool_used', {
                             'event_category': 'tool_usage',
                             'gas_low': data.result.SafeGasPrice,
+                            'gas_avg': data.result.ProposeGasPrice,
                             'gas_high': data.result.FastGasPrice
                         });
-            } catch(error) {
-                console.error("Gas price error:", error);
-            }
-        }
-        // Tax Calculator
-        window.calculateTax = async () => {
-            const address = document.getElementById("walletAddress").value.trim();
-            if(!address) return alert("Please enter a wallet address");
-
-            try {
-                const response = await fetch(
-                    `https://api.covalenthq.com/v1/1/address/${address}/transactions_v2/?key=${COVALENT_API_KEY}`
-                );
-                const data = await response.json();
-                
-                if(!data.data?.items) return alert("No transactions found");
-                
-                let totalGains = data.data.items.reduce((acc, tx) => {
-                    if(tx.from_address.toLowerCase() === address.toLowerCase()) {
-                        return acc + (tx.value * 1e-18); // Convert wei to ETH
                     }
-                    return acc;
-                }, 0);
-
-                const taxOwed = totalGains * 0.2;
-                document.getElementById("taxAmount").textContent = totalGains.toFixed(4);
-                document.getElementById("taxOwed").textContent = taxOwed.toFixed(4);
-                document.getElementById("taxResult").classList.remove("d-none");
-            } catch(error) {
-                alert("Error fetching transactions");
-                console.error(error);
+                } catch(error) {
+                    console.error("Gas price error:", error);
+                }
             }
-        };
 
-        window.generatePDF = () => {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.text("Crypto Tax Report", 10, 10);
-            doc.text(`Wallet Address: ${document.getElementById("walletAddress").value}`, 10, 20);
-            doc.text(`Taxable Gains: ${document.getElementById("taxAmount").textContent} ETH`, 10, 30);
-            doc.text(`Tax Owed (20%): ${document.getElementById("taxOwed").textContent} ETH`, 10, 40);
-         
-            // PDF creation code
-                
+            // Tax Calculator
+            window.calculateTax = async () => {
+                const address = document.getElementById("walletAddress").value.trim();
+                if(!address) return alert("Please enter a wallet address");
+
+                try {
+                    const response = await fetch(
+                        `https://api.covalenthq.com/v1/1/address/${address}/transactions_v2/?key=${COVALENT_API_KEY}`
+                    );
+                    const data = await response.json();
+                    
+                    if(!data.data?.items) return alert("No transactions found");
+                    
+                    let totalGains = data.data.items.reduce((acc, tx) => {
+                        if(tx.from_address.toLowerCase() === address.toLowerCase()) {
+                            return acc + (tx.value * 1e-18);
+                        }
+                        return acc;
+                    }, 0);
+
+                    const taxOwed = totalGains * 0.2;
+                    document.getElementById("taxAmount").textContent = totalGains.toFixed(4);
+                    document.getElementById("taxOwed").textContent = taxOwed.toFixed(4);
+                    document.getElementById("taxResult").classList.remove("d-none");
+
+                    // Track tax calculation
+                    gtag('event', 'tax_calculated', {
+                        'event_category': 'tool_usage',
+                        'transactions_count': data.data.items.length,
+                        'tax_owed': taxOwed
+                    });
+                } catch(error) {
+                    alert("Error fetching transactions");
+                    console.error(error);
+                }
+            };
+
+            window.generatePDF = () => {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                doc.text("Crypto Tax Report", 10, 10);
+                doc.text(`Wallet Address: ${document.getElementById("walletAddress").value}`, 10, 20);
+                doc.text(`Taxable Gains: ${document.getElementById("taxAmount").textContent} ETH`, 10, 30);
+                doc.text(`Tax Owed (20%): ${document.getElementById("taxOwed").textContent} ETH`, 10, 40);
+                doc.save("tax-report.pdf");
+
+                // Track PDF download
                 gtag('event', 'pdf_download', {
                     'event_category': 'pro_feature',
-                    'event_label': 'tax_report'
+                    'event_label': urlParams.has('payment_success') ? 'pro_version' : 'free_version'
                 });
-                
-                doc.save("tax-report.pdf");
             };
-        }); 
 
-        };
-
-        // Initialize gas prices
-        fetchGasPrices();
-        setInterval(fetchGasPrices, 30000);
-    });
+            // Initialize gas prices
+            fetchGasPrices();
+            setInterval(fetchGasPrices, 30000);
+        });
     </script>
 </body>
 </html>
-                  
