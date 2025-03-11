@@ -285,11 +285,17 @@
                     );
                     gasChart.update();
                 }
+
+                    // Update UI
+                        gtag('event', 'gas_tool_used', {
+                            'event_category': 'tool_usage',
+                            'gas_low': data.result.SafeGasPrice,
+                            'gas_high': data.result.FastGasPrice
+                        });
             } catch(error) {
                 console.error("Gas price error:", error);
             }
         }
-
         // Tax Calculator
         window.calculateTax = async () => {
             const address = document.getElementById("walletAddress").value.trim();
@@ -327,7 +333,18 @@
             doc.text(`Wallet Address: ${document.getElementById("walletAddress").value}`, 10, 20);
             doc.text(`Taxable Gains: ${document.getElementById("taxAmount").textContent} ETH`, 10, 30);
             doc.text(`Tax Owed (20%): ${document.getElementById("taxOwed").textContent} ETH`, 10, 40);
-            doc.save("tax-report.pdf");
+         
+            // PDF creation code
+                
+                gtag('event', 'pdf_download', {
+                    'event_category': 'pro_feature',
+                    'event_label': 'tax_report'
+                });
+                
+                doc.save("tax-report.pdf");
+            };
+        }); 
+
         };
 
         // Initialize gas prices
@@ -337,4 +354,4 @@
     </script>
 </body>
 </html>
-   
+                  
