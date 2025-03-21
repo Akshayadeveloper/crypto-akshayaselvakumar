@@ -246,29 +246,36 @@
 
                 <!-- Portfolio Tracker (Pro Feature) -->
                 <div class="col-md-4">
-                    <div class="card tool-card feature-locked">
+                    <div class="card tool-card pro-feature feature-locked">
                         <div class="card-body">
                             <h5 class="card-title">📊 Portfolio Tracker</h5>
-                            <p class="card-text">Track your crypto portfolio</p>
-                            <button class="btn btn-primary upgrade-button" onclick="upgradeToPro()">Upgrade to Pro</button>
+                            <div class="mb-3">
+                                <input type="text" id="portfolioWalletAddress" class="form-control" placeholder="Enter ETH Address">
+                                <button onclick="trackPortfolio()" class="btn btn-primary mt-2">Track Portfolio</button>
+                            </div>
+                            <div id="portfolioContainer"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- NFT Valuation (Premium Feature) -->
+                <!-- NFT Tracker (Premium Feature) -->
                 <div class="col-md-4">
-                    <div class="card tool-card feature-locked">
+                    <div class="card tool-card premium-feature feature-locked">
                         <div class="card-body">
-                            <h5 class="card-title">🖼️ NFT Valuation</h5>
-                            <p class="card-text">Estimate NFT values</p>
-                            <button class="btn btn-primary upgrade-button" onclick="upgradeToPremium()">Upgrade to Premium</button>
+                            <h5 class="card-title">🖼️ NFT Tracker</h5>
+                            <div class="mb-3">
+                                <input type="text" id="nftWalletAddress" class="form-control" placeholder="Enter ETH Address">
+                                <button onclick="trackNFTs()" class="btn btn-primary mt-2">Track NFTs</button>
+                            </div>
+                            <div id="nftContainer" class="row"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-     <!-- Donate Section -->
+
+    <!-- Donate Section -->
     <section id="donate" class="py-5 bg-light">
         <div class="container text-center">
             <h2 class="mb-4">Support Our Development</h2>
@@ -278,7 +285,8 @@
             </button>
         </div>
     </section>
-     <!-- Partners Section -->
+
+    <!-- Partners Section -->
     <section id="partners" class="py-5 bg-light">
         <div class="container">
             <h2 class="text-center mb-5">Exchange Partners</h2>
@@ -335,6 +343,7 @@
             </div>
         </div>
     </footer>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -375,138 +384,267 @@
             }
         }
 
-        // Payment Success Handling
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('payment_success')) {
-            window.history.replaceState({}, document.title, "/");
-            showThankYouPage();
-            gtag('event', 'payment_success', {
-                'event_category': 'transactions'
+        // Token Verification Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+
+            if (token) {
+                // Verify the token and unlock features
+                verifyToken(token).then(plan => {
+                    if (plan === 'pro') {
+                        unlockProFeatures();
+                    } else if (plan === 'advanced') {
+                        unlockAdvancedFeatures();
+                    } else if (plan === 'premium') {
+                        unlockPremiumFeatures();
+                    }
+                });
+            }
+        });
+
+        async function verifyToken(token) {
+            try {
+                // Fetch the token's validity and associated plan from Pipedream
+                const response = await fetch(`https://eoothhsaulitkx5.m.pipedream.net/verify?token=${token}`);
+                const data = await response.json();
+
+                if (data.valid) {
+                    return data.plan; // e.g., 'pro', 'advanced', 'premium'
+                } else {
+                    return null;
+                }
+            } catch (error) {
+                console.error('Token verification failed:', error);
+                return null;
+            }
+        }
+
+        function unlockProFeatures() {
+            // Unlock Pro features
+            document.querySelectorAll('.pro-feature').forEach(el => {
+                el.classList.remove('feature-locked');
+                el.querySelector('.upgrade-button')?.remove();
             });
         }
 
-        function showThankYouPage() {
-            const html = `
-                <div class="container text-center py-5">
-                    <h2 class="text-success">🎉 Payment Successful!</h2>
-                    <p class="lead">Thank you for upgrading to Pro!</p>
-                    <button onclick="generatePDF()" class="btn btn-lg btn-primary">
-                        Download Pro Report
-                    </button>
-                    <p class="mt-3"><a href="https://crypto.akshayaselvakumar.com/">Return to Home</a></p>
-                </div>
-            `;
-            document.body.innerHTML = html;
+        function unlockAdvancedFeatures() {
+            unlockProFeatures();
+            // Unlock Advanced features
+            document.querySelectorAll('.advanced-feature').forEach(el => {
+                el.classList.remove('feature-locked');
+                el.querySelector('.upgrade-button')?.remove();
+            });
+        }
+
+        function unlockPremiumFeatures() {
+            unlockAdvancedFeatures();
+            // Unlock Premium features
+            document.querySelectorAll('.premium-feature').forEach(el => {
+                el.classList.remove('feature-locked');
+                el.querySelector('.upgrade-button')?.remove();
+            });
         }
 
         // Gas Fee Optimizer
-        document.addEventListener('DOMContentLoaded', () => {
-            const gasChart = new Chart(document.getElementById('gasChart'), {
-                type: 'line',
-                data: {
-                    labels: Array.from({ length: 24 }, (_, i) => `${i}h`),
-                    datasets: [{
-                        label: 'Gas Price (gwei)',
-                        data: [],
-                        borderColor: '#0d6efd',
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } }
-                }
-            });
+        const gasChart = new Chart(document.getElementById('gasChart'), {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: 24 }, (_, i) => `${i}h`),
+                datasets: [{
+                    label: 'Gas Price (gwei)',
+                    data: [],
+                    borderColor: '#0d6efd',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
+        });
 
-            async function fetchGasPrices() {
-                try {
-                    const response = await fetch(
-                        `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${ETHERSCAN_API_KEY}`
+        async function fetchGasPrices() {
+            try {
+                const response = await fetch(
+                    `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${ETHERSCAN_API_KEY}`
+                );
+                const data = await response.json();
+
+                if (data.status === "1") {
+                    document.getElementById("gasLow").textContent = data.result.SafeGasPrice;
+                    document.getElementById("gasAvg").textContent = data.result.ProposeGasPrice;
+                    document.getElementById("gasHigh").textContent = data.result.FastGasPrice;
+
+                    gasChart.data.datasets[0].data = Array.from({ length: 24 }, () =>
+                        Math.floor(Math.random() * 50 + 20)
                     );
-                    const data = await response.json();
+                    gasChart.update();
 
-                    if (data.status === "1") {
-                        document.getElementById("gasLow").textContent = data.result.SafeGasPrice;
-                        document.getElementById("gasAvg").textContent = data.result.ProposeGasPrice;
-                        document.getElementById("gasHigh").textContent = data.result.FastGasPrice;
-
-                        gasChart.data.datasets[0].data = Array.from({ length: 24 }, () =>
-                            Math.floor(Math.random() * 50 + 20)
-                        );
-                        gasChart.update();
-
-                        gtag('event', 'gas_tool_used', {
-                            'event_category': 'tool_usage',
-                            'gas_low': data.result.SafeGasPrice,
-                            'gas_avg': data.result.ProposeGasPrice,
-                            'gas_high': data.result.FastGasPrice
-                        });
-                    }
-                } catch (error) {
-                    console.error("Gas price error:", error);
+                    gtag('event', 'gas_tool_used', {
+                        'event_category': 'tool_usage',
+                        'gas_low': data.result.SafeGasPrice,
+                        'gas_avg': data.result.ProposeGasPrice,
+                        'gas_high': data.result.FastGasPrice
+                    });
                 }
+            } catch (error) {
+                console.error("Gas price error:", error);
+            }
+        }
+
+        // Tax Calculator using Etherscan
+        window.calculateTax = async () => {
+            const address = document.getElementById("walletAddress").value.trim();
+            if (!address) return alert("Please enter a wallet address");
+
+            try {
+                const response = await fetch(
+                    `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=desc&apikey=${ETHERSCAN_API_KEY}`
+                );
+                const data = await response.json();
+
+                if (data.status !== "1" || !data.result.length) {
+                    return alert("No transactions found for this address");
+                }
+
+                let totalGains = data.result.reduce((acc, tx) => {
+                    if (tx.from.toLowerCase() === address.toLowerCase()) {
+                        return acc + (parseInt(tx.value) * 1e-18);
+                    }
+                    return acc;
+                }, 0);
+
+                const taxOwed = totalGains * 0.2;
+                document.getElementById("taxAmount").textContent = totalGains.toFixed(4);
+                document.getElementById("taxOwed").textContent = taxOwed.toFixed(4);
+                document.getElementById("taxResult").classList.remove("d-none");
+
+                gtag('event', 'tax_calculated', {
+                    'event_category': 'tool_usage',
+                    'transactions_count': data.result.length,
+                    'tax_owed': taxOwed
+                });
+            } catch (error) {
+                alert("Error fetching transactions");
+                console.error(error);
+            }
+        };
+
+        // NFT Tracker Functionality with Moralis API
+        async function fetchNFTs(walletAddress) {
+            try {
+                const response = await fetch(
+                    `https://deep-index.moralis.io/api/v2/${walletAddress}/nft?chain=eth&format=decimal`,
+                    {
+                        headers: {
+                            'X-API-Key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImMyMmFjYzAzLTBkMzItNDRmNS05ZjE5LTIxMWMyNTAwODQzNCIsIm9yZ0lkIjoiNDM3MzU5IiwidXNlcklkIjoiNDQ5OTM5IiwidHlwZUlkIjoiZjhjNmY5NTItMzA0OS00ZTBmLTk0MGUtOTdkNDRhNTg4ODM1IiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3NDI1MzkwNjAsImV4cCI6NDg5ODI5OTA2MH0.yapu-vrlVsekUi6IlYSt1NCbgIlTyVBnI7zPKRxRyS0' // Your Moralis API Key
+                        }
+                    }
+                );
+                const data = await response.json();
+                return data.result; // Returns an array of NFTs
+            } catch (error) {
+                console.error("Error fetching NFTs:", error);
+                return [];
+            }
+        }
+
+        function displayNFTs(nfts) {
+            const nftContainer = document.getElementById("nftContainer");
+            nftContainer.innerHTML = ""; // Clear previous results
+
+            if (nfts.length === 0) {
+                nftContainer.innerHTML = "<p>No NFTs found for this wallet address.</p>";
+                return;
             }
 
-            // Tax Calculator using Etherscan
-            window.calculateTax = async () => {
-                const address = document.getElementById("walletAddress").value.trim();
-                if (!address) return alert("Please enter a wallet address");
+            nfts.forEach(nft => {
+                // Extract metadata (if available)
+                const metadata = nft.metadata ? JSON.parse(nft.metadata) : null;
+                const imageUrl = metadata?.image || 'https://via.placeholder.com/150';
+                const name = metadata?.name || "Unnamed NFT";
+                const description = metadata?.description || "No description available.";
 
-                try {
-                    const response = await fetch(
-                        `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&sort=desc&apikey=${ETHERSCAN_API_KEY}`
-                    );
-                    const data = await response.json();
+                const nftCard = `
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <img src="${imageUrl}" class="card-img-top" alt="${name}">
+                            <div class="card-body">
+                                <h5 class="card-title">${name}</h5>
+                                <p class="card-text">${description}</p>
+                                <a href="https://opensea.io/assets/ethereum/${nft.token_address}/${nft.token_id}" target="_blank" class="btn btn-primary">View on OpenSea</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                nftContainer.innerHTML += nftCard;
+            });
+        }
 
-                    if (data.status !== "1" || !data.result.length) {
-                        return alert("No transactions found for this address");
-                    }
+        window.trackNFTs = async () => {
+            const walletAddress = document.getElementById("nftWalletAddress").value.trim();
+            if (!walletAddress) return alert("Please enter a wallet address");
 
-                    let totalGains = data.result.reduce((acc, tx) => {
-                        if (tx.from.toLowerCase() === address.toLowerCase()) {
-                            return acc + (parseInt(tx.value) * 1e-18);
-                        }
-                        return acc;
-                    }, 0);
+            const nfts = await fetchNFTs(walletAddress);
+            displayNFTs(nfts);
+        };
 
-                    const taxOwed = totalGains * 0.2;
-                    document.getElementById("taxAmount").textContent = totalGains.toFixed(4);
-                    document.getElementById("taxOwed").textContent = taxOwed.toFixed(4);
-                    document.getElementById("taxResult").classList.remove("d-none");
+        // Portfolio Tracker Functionality
+        async function fetchPortfolio(walletAddress) {
+            try {
+                const response = await fetch(
+                    `https://api.etherscan.io/api?module=account&action=balance&address=${walletAddress}&tag=latest&apikey=${ETHERSCAN_API_KEY}`
+                );
+                const data = await response.json();
 
-                    gtag('event', 'tax_calculated', {
-                        'event_category': 'tool_usage',
-                        'transactions_count': data.result.length,
-                        'tax_owed': taxOwed
-                    });
-                } catch (error) {
-                    alert("Error fetching transactions");
-                    console.error(error);
+                if (data.status === "1") {
+                    const balance = (data.result / 1e18).toFixed(4); // Convert wei to ETH
+                    return { balance };
+                } else {
+                    return { balance: 0 };
                 }
-            };
+            } catch (error) {
+                console.error("Error fetching portfolio:", error);
+                return { balance: 0 };
+            }
+        }
 
-            // PDF Generation
-            window.generatePDF = () => {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                doc.text("Crypto Tax Report", 10, 10);
-                doc.text(`Wallet Address: ${document.getElementById("walletAddress").value}`, 10, 20);
-                doc.text(`Taxable Gains: ${document.getElementById("taxAmount").textContent} ETH`, 10, 30);
-                doc.text(`Tax Owed (20%): ${document.getElementById("taxOwed").textContent} ETH`, 10, 40);
-                doc.save("tax-report.pdf");
+        function displayPortfolio(portfolio) {
+            const portfolioContainer = document.getElementById("portfolioContainer");
+            portfolioContainer.innerHTML = `
+                <p>ETH Balance: <strong>${portfolio.balance} ETH</strong></p>
+            `;
+        }
 
-                gtag('event', 'pdf_download', {
-                    'event_category': 'pro_feature',
-                    'event_label': urlParams.has('payment_success') ? 'pro_version' : 'free_version'
-                });
-            };
+        window.trackPortfolio = async () => {
+            const walletAddress = document.getElementById("portfolioWalletAddress").value.trim();
+            if (!walletAddress) return alert("Please enter a wallet address");
 
-            // Initialize gas prices
-            fetchGasPrices();
-            setInterval(fetchGasPrices, 30000);
-        });
+            const portfolio = await fetchPortfolio(walletAddress);
+            displayPortfolio(portfolio);
+        };
+
+        // PDF Generation
+        window.generatePDF = () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.text("Crypto Tax Report", 10, 10);
+            doc.text(`Wallet Address: ${document.getElementById("walletAddress").value}`, 10, 20);
+            doc.text(`Taxable Gains: ${document.getElementById("taxAmount").textContent} ETH`, 10, 30);
+            doc.text(`Tax Owed (20%): ${document.getElementById("taxOwed").textContent} ETH`, 10, 40);
+            doc.save("tax-report.pdf");
+
+            gtag('event', 'pdf_download', {
+                'event_category': 'pro_feature',
+                'event_label': urlParams.has('payment_success') ? 'pro_version' : 'free_version'
+            });
+        };
+
+        // Initialize gas prices
+        fetchGasPrices();
+        setInterval(fetchGasPrices, 30000);
     </script>
 </body>
 </html>
-
